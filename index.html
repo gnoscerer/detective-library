@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>推理书房 · 侦探小说档案库</title>
+<meta name="description" content="一座关于侦探小说的线上书房：经典作品索引、名侦探图鉴、流派年表、诡计图鉴与主题书单。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top"><span class="brand-seal">推</span><span class="brand-name">推理书房</span><span class="brand-sub">Detective library</span></a>
+    <nav class="site-nav" aria-label="页面导航">
+      <a href="#works">作品库</a>
+      <a href="#detectives">名侦探</a>
+      <a href="#timeline">流派年表</a>
+      <a href="#tricks">诡计图鉴</a>
+      <a href="#collections">主题书单</a>
+      <a href="#quiz">小测验</a>
+    </nav>
+    <button class="shelf-btn" id="shelf-btn" type="button" aria-label="查看我的书架"><span class="dot" id="shelf-count">0</span> 我的书架</button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Case files / 一座关于谜案的线上书房</p>
+        <h1>每一桩谜案，<br><em>都有一张借书卡。</em></h1>
+        <p class="hero-lead">从 1841 年巴黎莫格街那间反锁的房间，到当代东京的共生谜题。这里收录经典侦探小说、名侦探、诡计类型与流派年表，供你按图索骥、慢慢翻找。</p>
+        <div class="hero-actions">
+          <a class="btn" href="#works">翻开作品库</a>
+          <button class="btn ghost" id="random-btn" type="button">随机抽一本</button>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="art-top">
+          <span class="art-label">Archive no. 001 / 索引卡</span>
+          <span class="art-stamp">推理书房</span>
+        </div>
+        <svg class="art-svg" viewBox="0 0 270 170" role="img" aria-label="放大镜下的指纹装饰图案">
+          <rect x="1" y="1" width="268" height="168" rx="6" fill="#F1EDE2" stroke="#DED8C9" stroke-width="1"/>
+          <line x1="18" y1="24" x2="120" y2="24" stroke="#C7BFA9" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="18" y1="148" x2="96" y2="148" stroke="#C7BFA9" stroke-width="1" stroke-dasharray="4 4"/>
+          <text x="204" y="28" fill="#8B8C84" font-size="9" font-family="monospace" letter-spacing="1">NO. 001</text>
+          <circle cx="108" cy="82" r="43" fill="#FFFDF8" stroke="#243B55" stroke-width="2.5"/>
+          <path d="M80 98 C80 72 92 60 108 60 C124 60 136 72 136 98" fill="none" stroke="#A3322B" stroke-width="1.6" opacity=".75"/>
+          <path d="M87 102 C87 80 96 69 108 69 C120 69 129 80 129 102" fill="none" stroke="#A3322B" stroke-width="1.6" opacity=".65"/>
+          <path d="M94 105 C94 87 100 78 108 78 C116 78 122 87 122 105" fill="none" stroke="#A3322B" stroke-width="1.6" opacity=".55"/>
+          <path d="M101 108 C101 95 104 88 108 88 C112 88 115 95 115 108" fill="none" stroke="#A3322B" stroke-width="1.6" opacity=".45"/>
+          <path d="M78 88 C78 68 90 56 108 56" fill="none" stroke="#A3322B" stroke-width="1" opacity=".35"/>
+          <line x1="139" y1="113" x2="178" y2="152" stroke="#243B55" stroke-width="9" stroke-linecap="round"/>
+          <line x1="139" y1="113" x2="178" y2="152" stroke="#3A5470" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="212" cy="112" r="3" fill="#A88446"/>
+          <circle cx="226" cy="112" r="3" fill="#A88446" opacity=".6"/>
+          <circle cx="240" cy="112" r="3" fill="#A88446" opacity=".35"/>
+        </svg>
+        <div class="today-case" id="today-case"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="馆藏概览">
+    <div class="wrap stats-grid">
+      <div class="stat"><div class="k">收录作品</div><div class="v" id="stat-works">—</div></div>
+      <div class="stat"><div class="k">名侦探档案</div><div class="v" id="stat-detectives">—</div></div>
+      <div class="stat"><div class="k">诡计类型</div><div class="v" id="stat-tricks">—</div></div>
+      <div class="stat"><div class="k">横跨年代</div><div class="v" id="stat-years">—</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="works">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="num">01 / WORKS</p><h2>作品库</h2><p>按流派、地区或年代检索，点开任意一张索引卡看案件梗概与推理看点。</p></div>
+      </div>
+      <div class="filters">
+        <input id="q" type="search" placeholder="搜索书名、作者、侦探或关键词…" aria-label="搜索作品">
+        <select id="school" aria-label="按流派筛选"></select>
+        <select id="area" aria-label="按地区筛选"><option value="all">全部地区</option><option value="欧美">欧美</option><option value="日本">日本</option><option value="中国">中国</option></select>
+        <select id="sort" aria-label="排序方式"><option value="year-asc">按年代 ↑</option><option value="year-desc">按年代 ↓</option><option value="title">按书名</option></select>
+      </div>
+      <div class="filter-meta">
+        <span id="work-count">—</span>
+        <span class="right"><button class="text-btn" id="clear-filters" type="button">清除筛选</button><button class="text-btn" id="shelf-toggle" type="button">只看我的书架</button></span>
+      </div>
+      <div class="work-grid" id="work-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="detectives">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="num">02 / DETECTIVES</p><h2>名侦探图鉴</h2><p>从杜宾到御手洗洁，破案的方式其实比案件本身更能说明一个时代。</p></div>
+      </div>
+      <div class="detective-grid" id="detective-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="timeline">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="num">03 / TIMELINE</p><h2>流派年表</h2><p>一百八十年间，侦探小说几次改写自己：从解谜游戏，到城市寓言，再到社会追问。</p></div>
+      </div>
+      <ul class="timeline" id="timeline-list"></ul>
+    </div>
+  </section>
+
+  <section class="section" id="tricks">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="num">04 / DEVICES</p><h2>诡计图鉴</h2><p>十类反复出现的核心装置，以及最适合入门的代表作。</p></div>
+      </div>
+      <div class="trick-grid" id="trick-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="collections">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="num">05 / READING LISTS</p><h2>主题书单</h2><p>不知道从哪本开始？按主题挑一条路径。</p></div>
+      </div>
+      <div class="tabs" id="collection-tabs"></div>
+      <div class="collection-panel" id="collection-panel"></div>
+    </div>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="num">06 / QUIZ</p><h2>你是哪位名侦探？</h2><p>五道小题，凭直觉选。结果会附上一本适合你的入门作品。</p></div>
+      </div>
+      <div class="quiz-wrap">
+        <div class="quiz-intro"><span class="k">Personality file</span><h3>破案之前，先认识自己</h3><p>你相信物证还是人心？喜欢整齐的推理链，还是雨夜里一趟趟敲门？五个选择，把你放进一张侦探索引卡里。</p></div>
+        <div class="quiz-box" id="quiz-box"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span><strong>推理书房</strong> · 作品信息为编辑整理，年份取常见首版年份 · 案情梗概为内容简介，不含小说原文</span>
+    <span>源码 <a href="https://github.com/gnoscerer/detective-library" target="_blank" rel="noopener noreferrer">GitHub</a> · 托管于 Cloudflare Pages</span>
+  </div>
+</footer>
+
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="作品详情">
+  <button class="drawer-close" id="drawer-close" type="button" aria-label="关闭详情">×</button>
+  <div class="drawer-inner" id="drawer-body"></div>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
