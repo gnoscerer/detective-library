@@ -2,6 +2,7 @@
   'use strict';
   const D = window.SITE_DATA;
   const WORKS = D.WORKS;
+  const CONTENT = window.BOOK_CONTENT || {};
   const byId = Object.fromEntries(WORKS.map(w => [w.id, w]));
   const SHELF_KEY = 'detective-library-shelf';
   let shelf = [];
@@ -35,7 +36,7 @@
     $('today-case').innerHTML = '<div class="k">Today\'s case / 今日一案</div>'
       + '<h3>《' + w.title + '》</h3>'
       + '<p>' + w.author + ' · ' + w.year + ' · ' + w.intro.slice(0, 30) + '…</p>'
-      + '<div class="meta"><button class="text-btn" type="button" data-open="' + w.id + '">查看这张索引卡 →</button></div>';
+      + '<div class="meta"><button class="text-btn" type="button" data-open="' + w.id + '">读这一本 →</button></div>';
   }
 
   /* ---------- 作品库 ---------- */
@@ -51,7 +52,7 @@
       + '<p class="byline">' + w.author + ' · ' + w.detective + '</p>'
       + '<p class="intro">' + w.intro + '</p>'
       + '<div class="tags">' + tags.map((t, k) => '<span class="tag' + (k === 0 ? ' red' : (k === 1 ? ' navy' : '')) + '">' + t + '</span>').join('') + '</div>'
-      + '<div class="card-foot"><span>' + w.year + ' 年</span><span class="more">查看档案 →</span></div>'
+      + '<div class="card-foot"><span>' + w.year + ' 年 · 含完整细读</span><span class="more">阅读内容 →</span></div>'
       + '</article>';
   }
 
@@ -63,7 +64,7 @@
       if(state.shelfOnly && shelf.indexOf(w.id) === -1) return false;
       if(kw){
         const hay = [w.title,w.en,w.author,w.school,w.country,w.detective,w.intro,w.highlight]
-          .concat(w.tricks).join(' ').toLowerCase();
+          .concat(w.tricks, [contentHay(w.id)]).join(' ').toLowerCase();
         if(hay.indexOf(kw) === -1) return false;
       }
       return true;
@@ -157,16 +158,104 @@
       + '<div class="quiz-bar"><span style="width:100%"></span></div>'
       + '<div class="name">' + r.title + '</div><p>' + r.desc + '</p>'
       + '<p style="margin-top:14px">推荐从《' + r.work + '》开始'
-      + (w ? ' <button class="text-btn" type="button" data-open="' + w.id + '">查看档案 →</button>' : '') + '</p>'
+      + (w ? ' <button class="text-btn" type="button" data-open="' + w.id + '">读这一本 →</button>' : '') + '</p>'
       + '<div style="margin-top:22px"><button class="btn ghost small" type="button" data-restart="1">再测一次</button></div></div>';
   }
 
-  /* ---------- 详情抽屉 ---------- */
+  /* ---------- 作品细读抽屉 ---------- */
+  function contentHay(id){
+    const c = CONTENT[id];
+    if(!c) return '';
+    return [c.lead, (c.syn || []).join(' '), c.reveal,
+      (c.cast || []).map(x => x.join(' ')).join(' '),
+      (c.parts || []).join(' '),
+      (c.craft || []).map(x => x.join(' ')).join(' '),
+      c.note, (c.excerpt ? c.excerpt.cn : '')].join(' ');
+  }
+
+  function buildReading(w, c){
+    const idx = WORKS.indexOf(w);
+    const prev = WORKS[(idx - 1 + WORKS.length) % WORKS.length];
+    const next = WORKS[(idx + 1) % WORKS.length];
+    const sec = (id, no, title, inner) =>
+      '<section class="read-sec" id="' + id + '"><div class="sec-h"><span>' + no + '</span><h3>' + title
+      + '</h3></div>' + inner + '</section>';
+
+    const syn = '<p class="read-lead">' + c.lead + '</p>'
+      + c.syn.map(p => '<p>' + p + '</p>').join('')
+      + '<details class="spoiler"><summary><span>展开完整解答</span><em>含剧透 · 未读请先看原书</em></summary>'
+      + '<div class="spoiler-body"><p>' + c.reveal + '</p></div></details>';
+
+    const cast = '<div class="cast-list">' + c.cast.map(x =>
+      '<div class="cast-row"><b>' + x[0] + '</b><p>' + x[1] + '</p></div>').join('') + '</div>';
+
+    const parts = '<p class="sec-note">共 ' + c.parts.length + ' 项 · 依原书顺序整理，部分长篇以结构段落代替回目</p>'
+      + '<ol class="parts-list">' + c.parts.map(p => '<li>' + p + '</li>').join('') + '</ol>';
+
+    const craft = '<div class="craft-list">' + c.craft.map((x, i) =>
+      '<div class="craft-item"><span>' + pad(i + 1) + '</span><div><h4>' + x[0] + '</h4><p>' + x[1]
+      + '</p></div></div>').join('') + '</div>'
+      + '<div class="editor-note"><b>编辑短评 / EDITOR NOTE</b><p>' + c.note + '</p></div>';
+
+    const links = c.pd ? [
+      ['古登堡计划 · 英文全文', 'https://www.gutenberg.org/ebooks/search/?query=' + encodeURIComponent(w.en)],
+      ['维基文库 · 中文文本', 'https://zh.wikisource.org/w/index.php?search=' + encodeURIComponent(w.title)],
+      ['Internet Archive · 馆藏', 'https://archive.org/search?query=' + encodeURIComponent(w.en)]
+    ] : [
+      ['豆瓣读书 · 版本信息', 'https://search.douban.com/book/subject_search?search_text=' + encodeURIComponent(w.title)],
+      ['维基百科 · 作品条目', 'https://zh.wikipedia.org/w/index.php?search=' + encodeURIComponent(w.title)]
+    ];
+
+    const origin = (c.excerpt
+        ? '<blockquote class="excerpt"><p class="orig">' + c.excerpt.text + '</p><p class="cn">'
+          + c.excerpt.cn + '</p><cite>' + c.excerpt.src + '</cite></blockquote>' : '')
+      + '<p class="rights' + (c.pd ? ' ok' : '') + '">' + (c.pd
+        ? '原著原文已进入公有领域，可由下列公有领域文库阅读全文；中文译本仍可能受著作权保护。'
+        : '该作品仍在著作权保护期内，本站只提供原创介绍与评论，不收录小说原文。请通过正规渠道阅读。') + '</p>'
+      + '<div class="read-links">' + links.map(l =>
+        '<a class="btn ghost small" target="_blank" rel="noopener noreferrer" href="' + l[1] + '">' + l[0] + '</a>').join('') + '</div>';
+
+    const chips = [['sec-syn','内容梗概'],['sec-cast','人物'],['sec-parts','篇目'],['sec-craft','赏析'],['sec-origin','原文']];
+
+    return '<nav class="read-nav" aria-label="细读目录">'
+      + chips.map((x, i) => '<button class="read-chip' + (i === 0 ? ' is-active' : '')
+        + '" type="button" data-jump="' + x[0] + '">' + x[1] + '</button>').join('')
+      + '</nav><div class="read-article">'
+      + sec('sec-syn','01','内容梗概',syn)
+      + sec('sec-cast','02','出场人物',cast)
+      + sec('sec-parts','03','篇目与结构',parts)
+      + sec('sec-craft','04','诡计拆解',craft)
+      + sec('sec-origin','05','原文与延伸',origin)
+      + '</div>'
+      + '<div class="read-pager"><button type="button" data-open="' + prev.id + '">← 上一部《' + prev.title + '》</button>'
+      + '<button type="button" data-open="' + next.id + '">下一部《' + next.title + '》 →</button></div>';
+  }
+
+  function bindReading(){
+    const drawer = $('drawer');
+    const chips = Array.from(drawer.querySelectorAll('.read-chip'));
+    const secs = Array.from(drawer.querySelectorAll('.read-sec'));
+    const bar = $('read-progress').firstElementChild;
+    drawer.onscroll = () => {
+      const max = drawer.scrollHeight - drawer.clientHeight;
+      bar.style.width = (max > 4 ? Math.min(100, drawer.scrollTop / max * 100) : 0) + '%';
+      let active = 0;
+      secs.forEach((s, i) => { if(s.offsetTop - 100 <= drawer.scrollTop) active = i; });
+      chips.forEach((ch, i) => ch.classList.toggle('is-active', i === active));
+    };
+    chips.forEach(ch => ch.addEventListener('click', () => {
+      const t = drawer.querySelector('#' + ch.dataset.jump);
+      if(t) drawer.scrollTo({top: Math.max(0, t.offsetTop - 12), behavior:'smooth'});
+    }));
+    drawer.onscroll();
+  }
+
   function openDrawer(id){
     const w = byId[id];
     if(!w) return;
+    const c = CONTENT[id];
     const on = shelf.indexOf(w.id) !== -1;
-    $('drawer-body').innerHTML = '<div class="d-id">INDEX CARD / NO. ' + pad(WORKS.indexOf(w) + 1) + '</div>'
+    $('drawer-body').innerHTML = '<div class="d-id">READING FILE / NO. ' + pad(WORKS.indexOf(w) + 1) + '</div>'
       + '<h2>' + w.title + '</h2><p class="d-en">' + w.en + '</p>'
       + '<div class="d-meta">'
       + '<div><b>作者</b>' + w.author + '（' + w.country + '）</div>'
@@ -174,18 +263,17 @@
       + '<div><b>流派</b>' + w.school + '</div>'
       + '<div><b>登场侦探</b>' + w.detective + '</div>'
       + '</div>'
-      + '<div class="d-block"><h4>案件梗概</h4><p>' + w.intro + '</p></div>'
-      + '<div class="d-block"><h4>推理看点</h4><p>' + w.highlight + '</p></div>'
-      + '<div class="d-block"><h4>诡计标签</h4><div class="tags">'
-      + w.tricks.map(t => '<span class="tag red">' + t + '</span>').join('') + '</div></div>'
+      + '<div class="tags" style="margin:-6px 0 18px">' + w.tricks.map(t => '<span class="tag red">' + t + '</span>').join('') + '</div>'
+      + (c ? buildReading(w, c)
+           : '<div class="d-block"><h4>案件梗概</h4><p>' + w.intro + '</p></div><div class="d-block"><h4>推理看点</h4><p>' + w.highlight + '</p></div>')
       + '<div class="d-actions">'
-      + '<button class="btn small" type="button" data-shelf="' + w.id + '" id="drawer-shelf">' + (on ? '移出我的书架' : '加入我的书架') + '</button>'
-      + '<a class="btn ghost small" target="_blank" rel="noopener noreferrer" href="https://www.gutenberg.org/ebooks/search/?query=' + encodeURIComponent(w.en) + '">查找英文原文</a>'
-      + '<a class="btn ghost small" target="_blank" rel="noopener noreferrer" href="https://zh.wikisource.org/w/index.php?search=' + encodeURIComponent(w.title) + '">查找中文文本</a>'
-      + '</div>';
+      + '<button class="btn small" type="button" data-shelf="' + w.id + '" id="drawer-shelf">'
+      + (on ? '移出我的书架' : '加入我的书架') + '</button></div>';
+    $('drawer').scrollTop = 0;
     $('drawer').classList.add('is-open');
     $('drawer-overlay').classList.add('is-open');
     document.body.classList.add('drawer-open');
+    if(c) bindReading();
     $('drawer-close').focus();
   }
   function closeDrawer(){

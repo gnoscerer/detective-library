@@ -30,7 +30,7 @@
       <div>
         <p class="eyebrow">Case files / 一座关于谜案的线上书房</p>
         <h1>每一桩谜案，<br><em>都有一张借书卡。</em></h1>
-        <p class="hero-lead">从 1841 年巴黎莫格街那间反锁的房间，到当代东京的共生谜题。这里收录经典侦探小说、名侦探、诡计类型与流派年表，供你按图索骥、慢慢翻找。</p>
+        <p class="hero-lead">从 1841 年巴黎莫格街那间反锁的房间，到当代东京的共生谜题。这里收录经典侦探小说、名侦探、诡计类型与流派年表；<strong>43 部作品每一部都配了完整的内容细读</strong>——故事梗概、人物、篇目、诡计拆解与公版原文入口。</p>
         <div class="hero-actions">
           <a class="btn" href="#works">翻开作品库</a>
           <button class="btn ghost" id="random-btn" type="button">随机抽一本</button>
@@ -75,10 +75,10 @@
   <section class="section" id="works">
     <div class="wrap">
       <div class="section-head">
-        <div><p class="num">01 / WORKS</p><h2>作品库</h2><p>按流派、地区或年代检索，点开任意一张索引卡看案件梗概与推理看点。</p></div>
+        <div><p class="num">01 / WORKS</p><h2>作品库</h2><p>按流派、地区或年代检索。点开任意一张索引卡，就能读到这本书的完整细读；搜索框也支持内容关键词。</p></div>
       </div>
       <div class="filters">
-        <input id="q" type="search" placeholder="搜索书名、作者、侦探或关键词…" aria-label="搜索作品">
+        <input id="q" type="search" placeholder="搜索书名、作者、侦探或内容关键词…" aria-label="搜索作品">
         <select id="school" aria-label="按流派筛选"></select>
         <select id="area" aria-label="按地区筛选"><option value="all">全部地区</option><option value="欧美">欧美</option><option value="日本">日本</option><option value="中国">中国</option></select>
         <select id="sort" aria-label="排序方式"><option value="year-asc">按年代 ↑</option><option value="year-desc">按年代 ↓</option><option value="title">按书名</option></select>
@@ -143,19 +143,21 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <span><strong>推理书房</strong> · 作品信息为编辑整理，年份取常见首版年份 · 案情梗概为内容简介，不含小说原文</span>
+    <span><strong>推理书房</strong> · 作品信息为编辑整理，年份取常见首版年份 · 细读内容为本站原创介绍与评论，不收录受保护作品的原文</span>
     <span>源码 <a href="https://github.com/gnoscerer/detective-library" target="_blank" rel="noopener noreferrer">GitHub</a> · 托管于 Cloudflare Pages</span>
   </div>
 </footer>
 
 <div class="drawer-overlay" id="drawer-overlay"></div>
-<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="作品详情">
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="作品细读">
+  <div class="read-progress" id="read-progress"><span></span></div>
   <button class="drawer-close" id="drawer-close" type="button" aria-label="关闭详情">×</button>
   <div class="drawer-inner" id="drawer-body"></div>
 </aside>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="assets/data.js"></script>
+<script src="assets/content.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
