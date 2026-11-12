@@ -143,10 +143,17 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <span><strong>推理书房</strong> · 作品信息为编辑整理，年份取常见首版年份 · 细读内容为本站原创介绍与评论，不收录受保护作品的原文</span>
-    <span>源码 <a href="https://github.com/gnoscerer/detective-library" target="_blank" rel="noopener noreferrer">GitHub</a> · 托管于 Cloudflare Pages</span>
+    <div class="footer-line">
+      <span>© <span id="copy-year">2026</span> <strong>推理书房</strong> · Detective Library · 版权所有（All rights reserved）</span>
+      <span>联系：<a href="mailto:gnoscerer@gmail.com">gnoscerer@gmail.com</a></span>
+    </div>
+    <div class="footer-line">
+      <span>本站文字、编排与代码为原创整理，未经许可请勿转载 · 细读内容为原创介绍与评论，不收录受保护作品原文 · 作品信息年份取常见首版年份</span>
+      <span>源码 <a href="https://github.com/gnoscerer/detective-library" target="_blank" rel="noopener noreferrer">GitHub</a> · 托管于 <a href="https://pages.cloudflare.com/" target="_blank" rel="noopener noreferrer">Cloudflare Pages</a></span>
+    </div>
   </div>
 </footer>
+<script>document.getElementById('copy-year').textContent = new Date().getFullYear();</script>
 
 <div class="drawer-overlay" id="drawer-overlay"></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="作品细读">
